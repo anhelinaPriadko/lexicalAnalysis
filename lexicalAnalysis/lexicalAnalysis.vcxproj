@@ -123,10 +123,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FileReader.cpp" />
+    <ClCompile Include="Lexer.cpp" />
     <ClCompile Include="lexicalAnalysis.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="sample.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FileReader.h" />
+    <ClInclude Include="Lexer.h" />
+    <ClInclude Include="Token.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

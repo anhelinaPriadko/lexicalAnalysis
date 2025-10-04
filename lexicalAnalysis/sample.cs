@@ -1,15 +1,9 @@
-#define MAX 100
-using System;
-
-class Program
+class Unfinished
 {
-	static void Main()
-	{
-		2.234e-1
-		int x = 0x1Fp;
-		float y = 3.14f;
-		string s = "hello";
-		// this is a comment
-		if (x > 10) return;
-	}
+    void Test()
+    {
+        string badString = "Hello;
+        char badChar = 'x;
+        int x = 10
+    }
 }
