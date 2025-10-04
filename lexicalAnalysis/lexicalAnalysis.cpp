@@ -208,7 +208,10 @@ public:
 						get();
 					}
 					// optional integer suffixes (u,l,ul,LU etc) - we'll just consume letters if present
-					while (!eof() && isalpha((unsigned char)peek())) get();
+					if (!eof()) {
+						if (peek() == 'u' || peek() == 'U') get();
+						if (peek() == 'l' || peek() == 'L') get();
+					}
 					string val = input.substr(start, pos - start);
 					if (hasHex) tokens.emplace_back(TokenType::HEX_LITERAL, val);
 					else tokens.emplace_back(TokenType::UNKNOWN, val);
@@ -234,7 +237,14 @@ public:
 					if (!expDigits) pos = save; else isFloat = true;
 				}
 				// suffix letters (f, d, m, u, l etc) - consume letters
-				while (!eof() && isalpha((unsigned char)peek())) get();
+				if (!eof()) {
+					char ch = peek();
+					if (ch == 'f' || ch == 'F' || ch == 'd' || ch == 'D' ||
+						ch == 'm' || ch == 'M' || ch == 'u' || ch == 'U' ||
+						ch == 'l' || ch == 'L') {
+						get();
+					}
+				}
 				string val = input.substr(start, pos - start);
 				tokens.emplace_back(isFloat ? TokenType::FLOAT_LITERAL : TokenType::INTEGER_LITERAL, val);
 				atLineStart = false;

@@ -5,10 +5,8 @@ class Program
 {
 	static void Main()
 	{
-		int float $$$fbc
-		2abcp
-		abc
-		int x = 0x1F;
+		2.234e-1
+		int x = 0x1Fp;
 		float y = 3.14f;
 		string s = "hello";
 		// this is a comment
