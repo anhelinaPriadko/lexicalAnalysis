@@ -4,6 +4,9 @@ class SomeClass
     {
         string badString = Hello";
         char badChar = 'x;
-        int x = 0x12ba1;
+        int x = 0x12ta1;
     }
 }
+
+
+
