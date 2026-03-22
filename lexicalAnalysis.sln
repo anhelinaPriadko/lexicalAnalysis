@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36518.9 d17.14
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11527.330
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lexicalAnalysis", "lexicalAnalysis\lexicalAnalysis.vcxproj", "{B36ECB79-F2D5-4363-BDCD-880C92289284}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LexerUnitTests", "LexerUnitTests\LexerUnitTests.vcxproj", "{9851F098-7B38-4D6A-A617-022A5BA4ECFA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,14 @@ Global
 		{B36ECB79-F2D5-4363-BDCD-880C92289284}.Release|x64.Build.0 = Release|x64
 		{B36ECB79-F2D5-4363-BDCD-880C92289284}.Release|x86.ActiveCfg = Release|Win32
 		{B36ECB79-F2D5-4363-BDCD-880C92289284}.Release|x86.Build.0 = Release|Win32
+		{9851F098-7B38-4D6A-A617-022A5BA4ECFA}.Debug|x64.ActiveCfg = Debug|x64
+		{9851F098-7B38-4D6A-A617-022A5BA4ECFA}.Debug|x64.Build.0 = Debug|x64
+		{9851F098-7B38-4D6A-A617-022A5BA4ECFA}.Debug|x86.ActiveCfg = Debug|Win32
+		{9851F098-7B38-4D6A-A617-022A5BA4ECFA}.Debug|x86.Build.0 = Debug|Win32
+		{9851F098-7B38-4D6A-A617-022A5BA4ECFA}.Release|x64.ActiveCfg = Release|x64
+		{9851F098-7B38-4D6A-A617-022A5BA4ECFA}.Release|x64.Build.0 = Release|x64
+		{9851F098-7B38-4D6A-A617-022A5BA4ECFA}.Release|x86.ActiveCfg = Release|Win32
+		{9851F098-7B38-4D6A-A617-022A5BA4ECFA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
