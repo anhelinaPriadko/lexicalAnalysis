@@ -4,9 +4,12 @@
 #include <vector>
 #include <unordered_set>
 #include <cctype>
+#include "IFileReader.h"
 using namespace std;
 
 class Lexer {
+    IFileReader* fileReader = nullptr;
+    std::string source;
     string input;
     size_t pos = 0;
     bool atLineStart = true;
@@ -18,9 +21,24 @@ class Lexer {
     string punctuators = "();{}[],.:?";
 
 public:
-    explicit Lexer(string s) : input(std::move(s)) {
+    explicit Lexer(string s) : input(std::move(s)), fileReader(nullptr) {
         initKeywords();
         initOps();
+    }
+
+    explicit Lexer(IFileReader& reader) : fileReader(&reader), input("") {
+        initKeywords();
+        initOps();
+    }
+
+    void loadFile(const string& path) {
+        if (fileReader != nullptr) {
+            if (fileReader->exists(path)) {
+                input = fileReader->read(path);
+                pos = 0;
+                atLineStart = true;
+            }
+        }
     }
 
     vector<Token> tokenize();

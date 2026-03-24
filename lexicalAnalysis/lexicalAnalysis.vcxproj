@@ -134,6 +134,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileReader.h" />
+    <ClInclude Include="IFileReader.h" />
     <ClInclude Include="Lexer.h" />
     <ClInclude Include="Token.h" />
   </ItemGroup>

@@ -8,11 +8,7 @@
 
 	<GoogleTestAdapterSettings>
 		<SolutionSettings>
-			<Settings />
 		</SolutionSettings>
-		<ProjectSettings>
-			<Settings />
-		</ProjectSettings>
 	</GoogleTestAdapterSettings>
 
 	<DataCollectionRunSettings>
@@ -22,12 +18,12 @@
 					<CodeCoverage>
 						<ModulePaths>
 							<Include>
-								<ModulePath>.*\.exe</ModulePath>
-								<ModulePath>.*\.dll</ModulePath>
+								<ModulePath>.*LexerUnitTests\.exe</ModulePath>
 							</Include>
 							<Exclude>
 								<ModulePath>.*gtest.*</ModulePath>
 								<ModulePath>.*gmock.*</ModulePath>
+								<ModulePath>.*vcruntime.*</ModulePath>
 							</Exclude>
 						</ModulePaths>
 					</CodeCoverage>

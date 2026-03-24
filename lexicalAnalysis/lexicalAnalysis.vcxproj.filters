@@ -35,6 +35,9 @@
     <ClInclude Include="FileReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IFileReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

@@ -103,6 +103,7 @@
   <ItemGroup>
     <ClCompile Include="..\lexicalAnalysis\FileReader.cpp" />
     <ClCompile Include="..\lexicalAnalysis\Lexer.cpp" />
+    <ClCompile Include="LexerMockTests.cpp" />
     <ClCompile Include="LexerTests.cpp" />
     <ClCompile Include="test_main.cpp" />
   </ItemGroup>
@@ -116,6 +117,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LexerFixture.h" />
+    <ClInclude Include="MockFileReader.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="gtest.runsettings" />
