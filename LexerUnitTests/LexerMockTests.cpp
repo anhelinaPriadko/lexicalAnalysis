@@ -5,39 +5,50 @@
 
 using namespace testing;
 
-TEST(LexerMockTest, Lab2RequirementsChain) {
-    MockFileReader mock;
-    Lexer lexer(mock);
+namespace MockTests
+{
+    TEST(LexerMockTest, SequenceAndDifferentReturns) {
+        MockFileReader mock;
+        Lexer lexer(mock);
 
-    InSequence seq;
+        InSequence seq;
 
-    EXPECT_CALL(mock, exists(EndsWith(".cs")))
-        .WillOnce(Return(true));
-    EXPECT_CALL(mock, read(_))
-        .WillOnce(Return(""));
+        EXPECT_CALL(mock, exists("config.cs")).WillOnce(Return(true));
+        EXPECT_CALL(mock, read("config.cs")).WillOnce(Return(""));
 
-    EXPECT_CALL(mock, exists(EndsWith(".cs")))
-        .WillOnce(Return(true));
-    EXPECT_CALL(mock, read(_))
-        .WillOnce(Return("int x = 10;"));
+        EXPECT_CALL(mock, exists("config.cs")).WillOnce(Return(true));
+        EXPECT_CALL(mock, read("config.cs")).WillOnce(Return("int x = 5;"));
 
-    EXPECT_CALL(mock, exists("secret.cs"))
-        .WillOnce(Throw(std::runtime_error("Access Denied by System")));
+        lexer.loadFile("config.cs");
+        lexer.loadFile("config.cs");
+    }
 
-    lexer.loadFile("program.cs");
-    lexer.loadFile("another.cs");
+    TEST(LexerMockTest, ExceptionHandlingScenario) {
+        MockFileReader mock;
+        Lexer lexer(mock);
 
-    EXPECT_THROW(lexer.loadFile("secret.cs"), std::runtime_error);
-}
+        EXPECT_CALL(mock, exists("secret.cs"))
+            .WillOnce(Throw(std::runtime_error("Access Denied")));
 
-TEST(LexerMockTest, CallCountVerification) {
-    MockFileReader mock;
-    Lexer lexer(mock);
+        EXPECT_THROW(lexer.loadFile("secret.cs"), std::runtime_error);
+    }
 
-    EXPECT_CALL(mock, exists(_))
-        .Times(AtMost(3))
-        .WillRepeatedly(Return(false));
+    TEST(LexerMockTest, ComplexMatchersAndCallCount) {
+        MockFileReader mock;
+        Lexer lexer(mock);
 
-    lexer.loadFile("file1.cs");
-    lexer.loadFile("file2.cs");
+        EXPECT_CALL(mock, exists(AnyOf(EndsWith(".cs"), EndsWith(".txt"))))
+            .Times(2)
+            .WillRepeatedly(Return(true));
+
+        EXPECT_CALL(mock, read(_)).Times(2).WillRepeatedly(Return("var a = 1;"));
+
+        EXPECT_CALL(mock, exists(Not(AnyOf(EndsWith(".cs"), EndsWith(".txt")))))
+            .Times(AtLeast(1))
+            .WillRepeatedly(Return(false));
+
+        lexer.loadFile("main.cs");
+        lexer.loadFile("notes.txt");
+        lexer.loadFile("image.png");
+    }
 }
