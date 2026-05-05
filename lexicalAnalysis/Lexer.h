@@ -58,6 +58,13 @@ private:
     void initKeywords();
     void initOps();
 
+    void skipUntil(char delimiter);
+    Token handleInvalidSequence(size_t start);
+
+    Token readHexLiteral(size_t start);
+    Token readDecimalOrFloat(size_t start);
+    void consumeSuffixes();
+
     Token readPreprocessor();
     Token readComment();
     Token readString();

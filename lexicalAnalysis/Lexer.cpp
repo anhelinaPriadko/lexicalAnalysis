@@ -8,6 +8,7 @@ vector<Token> Lexer::tokenize() {
         char c = peek();
 
         if (isWhitespace(c)) { handleWhitespace(); continue; }
+
         if (c == '#' && atLineStart) { tokens.push_back(readPreprocessor()); continue; }
         if (c == '/' && peek(1) == '/') { tokens.push_back(readComment()); continue; }
         if (c == '"') { tokens.push_back(readString()); continue; }
@@ -33,25 +34,21 @@ void Lexer::handleWhitespace() {
 }
 
 void Lexer::initKeywords() {
-    string ks[] = {
-            "abstract","as","base","bool","break","byte","case","catch","char","checked",
-            "class","const","continue","decimal","default","delegate","do","double","else",
-            "enum","event","explicit","extern","false","finally","fixed","float","for","foreach",
-            "goto","if","implicit","in","int","interface","internal","is","lock","long",
-            "namespace","new","null","object","operator","out","override","params","private",
-            "protected","public","readonly","ref","return","sbyte","sealed","short","sizeof",
-            "stackalloc","static","string","struct","switch","this","throw","true","try","typeof",
-            "uint","ulong","unchecked","unsafe","ushort","using","virtual","void","volatile","while"
+    keywords = {
+        "abstract", "as", "base", "bool", "break", "byte", "case", "catch", "char", "checked",
+        "class", "const", "continue", "decimal", "default", "delegate", "do", "double", "else",
+        "enum", "event", "explicit", "extern", "false", "finally", "fixed", "float", "for", "foreach",
+        "goto", "if", "implicit", "in", "int", "interface", "internal", "is", "lock", "long",
+        "namespace", "new", "null", "object", "operator", "out", "override", "params", "private",
+        "protected", "public", "readonly", "ref", "return", "sbyte", "sealed", "short", "sizeof",
+        "stackalloc", "static", "string", "struct", "switch", "this", "throw", "true", "try", "typeof",
+        "uint", "ulong", "unchecked", "unsafe", "ushort", "using", "virtual", "void", "volatile", "while"
     };
-    for (auto& k : ks) keywords.insert(k);
 }
 
 void Lexer::initOps() {
-    string t2[] = { "==","<=",">=","!=","&&","||","++","--","+=", "-=", "*=", "/=", "%=",
-                        "&=", "|=", "^=", "->", "??", "::","<<", ">>", "=>" };
-    string t3[] = { "<<=", ">>=" };
-    for (auto& s : t2) twoCharOps.insert(s);
-    for (auto& s : t3) threeCharOps.insert(s);
+    twoCharOps = { "==", "<=", ">=", "!=", "&&", "||", "++", "--", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=", "->", "??", "::", "<<", ">>", "=>" };
+    threeCharOps = { "<<=", ">>=" };
 }
 
 Token Lexer::readPreprocessor() {
@@ -105,84 +102,30 @@ Token Lexer::readChar() {
 
 Token Lexer::readIdentifier() {
     size_t start = pos;
-
     if (peek() == '@') get();
 
     while (!eof() && isAlphaNum(peek())) get();
 
     if (!eof() && (peek() == '"' || peek() == '\'')) {
-        get();
-        if (input[pos - 1] == '"') {
-            while (!eof() && peek() != '"' && !isWhitespace(peek()) &&
-                (punctuators.find(peek()) == string::npos)) {
-                get();
-            }
-            if (!eof() && peek() == '"') get();
-        }
-        else {
-            while (!eof() && peek() != '\'' && !isWhitespace(peek()) &&
-                (punctuators.find(peek()) == string::npos)) {
-                get();
-            }
-            if (!eof() && peek() == '\'') get();
-        }
-        string bad = input.substr(start, pos - start);
-        return { TokenType::UNKNOWN, bad };
+        char delim = get();
+        skipUntil(delim);
+        return { TokenType::UNKNOWN, input.substr(start, pos - start) };
     }
 
     string word = input.substr(start, pos - start);
-    return { keywords.count(word) ? TokenType::KEYWORD : TokenType::IDENTIFIER, word };
+    TokenType type = keywords.count(word) ? TokenType::KEYWORD : TokenType::IDENTIFIER;
+    return { type, word };
 }
 
-
-Token Lexer::readNumber() {
-    size_t start = pos;
-
-    if (peek() == '0' && (peek(1) == 'x' || peek(1) == 'X')) {
-        pos += 2;
-        bool hasHex = false;
-
-        while (!eof() && isHexDigit(peek())) {
-            get();
-            hasHex = true;
-        }
-
-        if (!hasHex) {
-            while (!eof() && !isWhitespace(peek()) &&
-                (punctuators.find(peek()) == string::npos) &&
-                singleCharOps.find(peek()) == string::npos) {
-                get();
-            }
-            return { TokenType::UNKNOWN, input.substr(start, pos - start) };
-        }
-
-        if (!eof()) {
-            char ch = peek();
-            if (ch == 'u' || ch == 'U' || ch == 'l' || ch == 'L') {
-                get();
-                if (!eof()) {
-                    char ch2 = peek();
-                    if ((ch2 == 'u' || ch2 == 'U' || ch2 == 'l' || ch2 == 'L') &&
-                        (tolower(ch2) != tolower(ch))) {
-                        get();
-                    }
-                }
-                if (!eof() && (isAlpha(peek()) || peek() == '_')) {
-                    while (!eof() && (isAlphaNum(peek()) || peek() == '_')) get();
-                    return { TokenType::UNKNOWN, input.substr(start, pos - start) };
-                }
-                return { TokenType::HEX_LITERAL, input.substr(start, pos - start) };
-            }
-
-            if (isAlpha(peek()) || peek() == '_') {
-                while (!eof() && (isAlphaNum(peek()) || peek() == '_')) get();
-                return { TokenType::UNKNOWN, input.substr(start, pos - start) };
-            }
-        }
-
-        return { TokenType::HEX_LITERAL, input.substr(start, pos - start) };
+void Lexer::skipUntil(char delimiter) {
+    while (!eof() && peek() != delimiter && !isWhitespace(peek())) {
+        if (punctuators.find(peek()) != string::npos) break;
+        get();
     }
+    if (!eof() && peek() == delimiter) get();
+}
 
+Token Lexer::readDecimalOrFloat(size_t start) {
     bool isFloat = false;
     while (!eof() && isDigit(peek())) get();
 
@@ -192,44 +135,67 @@ Token Lexer::readNumber() {
         while (!eof() && isDigit(peek())) get();
     }
 
-    if (!eof() && (peek() == 'e' || peek() == 'E')) {
+    if (!eof() && tolower(peek()) == 'e') {
         size_t save = pos;
         get();
         if (!eof() && (peek() == '+' || peek() == '-')) get();
 
-        bool expDigits = false;
-        while (!eof() && isDigit(peek())) { get(); expDigits = true; }
+        bool hasExpDigits = false;
+        while (!eof() && isDigit(peek())) {
+            get();
+            hasExpDigits = true;
+        }
 
-        if (!expDigits) pos = save; else isFloat = true;
+        if (!hasExpDigits) pos = save;
+        else isFloat = true;
     }
 
-    if (!eof()) {
-        char ch = peek();
-        if (string("fFdDmMuUlL").find(ch) != string::npos) {
-            get();
-            if (!eof()) {
-                char ch2 = peek();
-                if ((ch2 == 'u' || ch2 == 'U' || ch2 == 'l' || ch2 == 'L') &&
-                    (string("fFdDmM").find(ch) == string::npos)) {
-                    get();
-                }
-            }
-            if (!eof() && (isAlpha(peek()) || peek() == '_')) {
-                while (!eof() && (isAlphaNum(peek()) || peek() == '_')) get();
-                return { TokenType::UNKNOWN, input.substr(start, pos - start) };
-            }
-        }
-        else if (isAlpha(peek()) || peek() == '_') {
-            while (!eof() && (isAlphaNum(peek()) || peek() == '_')) get();
-            return { TokenType::UNKNOWN, input.substr(start, pos - start) };
-        }
+    consumeSuffixes();
+
+    if (!eof() && (isAlpha(peek()) || peek() == '_')) {
+        return handleInvalidSequence(start);
     }
 
     string val = input.substr(start, pos - start);
     return { isFloat ? TokenType::FLOAT_LITERAL : TokenType::INTEGER_LITERAL, val };
 }
 
+Token Lexer::readNumber() {
+    size_t start = pos;
 
+    if (peek() == '0' && tolower(peek(1)) == 'x') {
+        return readHexLiteral(start);
+    }
+    return readDecimalOrFloat(start);
+}
+
+Token Lexer::readHexLiteral(size_t start) {
+    pos += 2;
+    bool hasDigits = false;
+    while (!eof() && isHexDigit(peek())) { get(); hasDigits = true; }
+
+    if (!hasDigits) return handleInvalidSequence(start);
+
+    consumeSuffixes();
+    return { TokenType::HEX_LITERAL, input.substr(start, pos - start) };
+}
+
+void Lexer::consumeSuffixes() {
+    string suffixes = "fFdDmMuUlL";
+    if (!eof() && suffixes.find(peek()) != string::npos) {
+        char first = get();
+        if (!eof() && suffixes.find(peek()) != string::npos && tolower(peek()) != tolower(first)) {
+            get();
+        }
+    }
+}
+
+Token Lexer::handleInvalidSequence(size_t start) {
+    while (!eof() && !isWhitespace(peek()) && punctuators.find(peek()) == string::npos) {
+        get();
+    }
+    return { TokenType::UNKNOWN, input.substr(start, pos - start) };
+}
 
 Token Lexer::tryReadOperator() {
     if (pos + 2 < input.size()) {
